@@ -44,7 +44,7 @@
   .stack-items{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
   .stack-item{background:rgba(0,200,232,0.08);border:1px solid rgba(0,200,232,0.2);color:#00c8e8;padding:8px 20px;border-radius:20px;font-size:13px;font-weight:500;}
   .footer{border-top:1px solid rgba(255,255,255,0.08);padding:32px 40px;text-align:center;color:rgba(255,255,255,0.3);font-size:13px;}
-  .ml-embedded .ml-block-form{background:transparent!important;}
+  
 </style>
 
 </head>
@@ -71,54 +71,17 @@
   <div class="form-section">
     <h2>Get the Free Prompt Pack</h2>
     <p>5 prompts. Real intelligence. Zero cost. No card required.</p>
-    <form id="brevo-form" style="display:flex;flex-direction:column;gap:12px;">
-      <input type="email" id="brevo-email" placeholder="Your email address" required
+        <form id="sib-form" method="POST" action="https://02406812.sibforms.com/serve/MUIFAPgS5QwxWlLzOhMC9RnNv1MoUmBhqij0EmR75UnuZiCA21Ez98XPVgwiM9B9H_VaLM5groi9DHUgG1_a1uqavryei1HGs0vavj0_4NLhHtt4XmcaQXcbuUUIDBJAL9GaMy3RHnWFvK2s9wjIvfgqxYhaSOj6vDpf_gTccquIRuf1fUHrfRhSUmyxeXF15MoQciG50q6rvyZClw==" data-type="subscription" style="display:flex;flex-direction:column;gap:12px;">
+      <input type="text" name="EMAIL" placeholder="Your email address" required autocomplete="off"
         style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:14px 18px;color:#fff;font-size:15px;outline:none;width:100%;">
       <button type="submit"
         style="background:#00c8e8;color:#000;border:none;border-radius:8px;padding:14px 18px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;">
         Send me the free pack
       </button>
-      <div id="brevo-success" style="display:none;color:#00c8e8;font-size:14px;text-align:center;padding:8px;">
-        Done -- check your inbox. Your free prompts are on the way.
-      </div>
-      <div id="brevo-error" style="display:none;color:#ff6b6b;font-size:14px;text-align:center;padding:8px;">
-        Something went wrong -- please try again.
-      </div>
+      <input type="text" name="email_address_check" value="" style="display:none;">
+      <input type="hidden" name="locale" value="en">
     </form>
-    <script>
-    document.getElementById('brevo-form').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const email = document.getElementById('brevo-email').value;
-      const btn = this.querySelector('button');
-      btn.textContent = 'Sending...';
-      btn.disabled = true;
-      try {
-        const resp = await fetch('https://api.brevo.com/v3/contacts', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'api-key': ''
-          },
-          body: JSON.stringify({
-            email: email,
-            listIds: 3,
-            updateEnabled: true
-          })
-        });
-        if (resp.ok || resp.status === 204) {
-          document.getElementById('brevo-success').style.display = 'block';
-          document.getElementById('brevo-email').style.display = 'none';
-          btn.style.display = 'none';
-        } else {
-          throw new Error('API error');
-        }
-      } catch(err) {
-        document.getElementById('brevo-error').style.display = 'block';
-        btn.textContent = 'Send me the free pack';
-        btn.disabled = false;
-      }
-    });
-    </script>
+    <script defer src="https://sibforms.com/forms/end-form/build/main.js"></script>
     <div class="divider"><span>or buy the full stack</span></div>
     <div class="store-buttons">
       <a href="https://novatsunami.gumroad.com/" class="btn btn-gumroad">Get on Gumroad</a>
