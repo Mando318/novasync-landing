@@ -46,15 +46,7 @@
   .footer{border-top:1px solid rgba(255,255,255,0.08);padding:32px 40px;text-align:center;color:rgba(255,255,255,0.3);font-size:13px;}
   .ml-embedded .ml-block-form{background:transparent!important;}
 </style>
-<!-- MailerLite Universal -->
-<script>
-(function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
-.push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
-n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
-(window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
-ml('account', '2308387');
-</script>
-<!-- End MailerLite Universal -->
+<!-- Brevo (formerly Sendinblue) -- replace BREVO_FORM_ID with your actual form ID after setup -->
 </head>
 <body>
 
@@ -79,7 +71,54 @@ ml('account', '2308387');
   <div class="form-section">
     <h2>Get the Free Prompt Pack</h2>
     <p>5 prompts. Real intelligence. Zero cost. No card required.</p>
-    <div class="ml-embedded" data-form="WqFguC"></div>
+    <form id="brevo-form" style="display:flex;flex-direction:column;gap:12px;">
+      <input type="email" id="brevo-email" placeholder="Your email address" required
+        style="background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:14px 18px;color:#fff;font-size:15px;outline:none;width:100%;">
+      <button type="submit"
+        style="background:#00c8e8;color:#000;border:none;border-radius:8px;padding:14px 18px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;">
+        Send me the free pack
+      </button>
+      <div id="brevo-success" style="display:none;color:#00c8e8;font-size:14px;text-align:center;padding:8px;">
+        Done -- check your inbox. Your free prompts are on the way.
+      </div>
+      <div id="brevo-error" style="display:none;color:#ff6b6b;font-size:14px;text-align:center;padding:8px;">
+        Something went wrong -- please try again.
+      </div>
+    </form>
+    <script>
+    document.getElementById('brevo-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const email = document.getElementById('brevo-email').value;
+      const btn = this.querySelector('button');
+      btn.textContent = 'Sending...';
+      btn.disabled = true;
+      try {
+        const resp = await fetch('https://api.brevo.com/v3/contacts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'api-key': 'REPLACE_WITH_YOUR_BREVO_API_KEY'
+          },
+          body: JSON.stringify({
+            email: email,
+            listIds: [REPLACE_WITH_YOUR_BREVO_LIST_ID],
+            updateEnabled: true
+          })
+        });
+        if (resp.ok || resp.status === 204) {
+          document.getElementById('brevo-success').style.display = 'block';
+          document.getElementById('brevo-email').style.display = 'none';
+          btn.style.display = 'none';
+        } else {
+          throw new Error('API error');
+        }
+      } catch(err) {
+        document.getElementById('brevo-error').style.display = 'block';
+        btn.textContent = 'Send me the free pack';
+        btn.disabled = false;
+      }
+    });
+    </script>
     <div class="divider"><span>or buy the full stack</span></div>
     <div class="store-buttons">
       <a href="https://novatsunami.gumroad.com/" class="btn btn-gumroad">Get on Gumroad</a>
@@ -119,3 +158,4 @@ ml('account', '2308387');
 
 </body>
 </html>
+
