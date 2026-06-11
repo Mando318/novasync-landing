@@ -1,195 +1,660 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NovaSync Operator Stack -- Free Prompt Pack</title>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- MailerLite Universal -->
-    <script>
-    (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
-    .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
-    n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
-    (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
-    ml('account', '2308387');
-    </script>
-    <!-- End MailerLite Universal -->
-    <style>
-        :root {
-            --black: #080808;
-            --white: #F5F3EE;
-            --accent: #C8FF00;
-            --gray: #1A1A1A;
-            --gray-light: #888;
-            --border: rgba(255,255,255,0.08);
-        }
-        *, *:before, *:after { box-sizing: border-box; margin: 0; padding: 0; }
-        html { scroll-behavior: smooth; }
-        body {
-            background: var(--black);
-            color: var(--white);
-            font-family: Syne, sans-serif;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-        .grain {
-            position: fixed; inset: 0; pointer-events: none; z-index: 0; opacity: 0.025;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
-            background-size: 200px 200px;
-        }
-        .grid-bg {
-            position: fixed; inset: 0; pointer-events: none; z-index: 0;
-            background-image: linear-gradient(rgba(200,255,0,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(200,255,0,0.03) 1px, transparent 1px);
-            background-size: 60px 60px;
-        }
-        .wrapper { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; padding: 0 24px; }
-        nav { padding: 28px 0; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
-        .logo { font-family: DM Mono, monospace; font-size: 13px; font-weight: 500; letter-spacing: 0.1em; color: var(--accent); }
-        .nav-tag { font-family: DM Mono, monospace; font-size: 11px; color: var(--gray-light); letter-spacing: 0.06em; }
-        .hero { padding: 80px 0 60px; }
-        .eyebrow { font-family: DM Mono, monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
-        .eyebrow:before { content: ''; display: block; width: 24px; height: 1px; background: var(--accent); }
-        h1 { font-family: DM Serif Display, serif; font-size: clamp(38px, 6vw, 58px); line-height: 1.08; font-weight: 400; color: var(--white); margin-bottom: 28px; }
-        h1 em { font-style: italic; color: var(--accent); }
-        .hero-body { font-size: 16px; line-height: 1.75; color: var(--gray-light); max-width: 520px; margin-bottom: 48px; }
-        .hero-body strong { color: var(--white); font-weight: 500; }
-        .stat-row { display: flex; gap: 32px; margin-bottom: 56px; flex-wrap: wrap; }
-        .stat { display: flex; flex-direction: column; gap: 4px; }
-        .stat-val { font-family: DM Mono, monospace; font-size: 22px; font-weight: 500; color: var(--white); }
-        .stat-label { font-family: DM Mono, monospace; font-size: 10px; color: var(--gray-light); letter-spacing: 0.08em; text-transform: uppercase; }
-        .stat-divider { width: 1px; background: var(--border); align-self: stretch; }
-        .prompts-section { margin-bottom: 64px; }
-        .section-label { font-family: DM Mono, monospace; font-size: 11px; color: var(--gray-light); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px; }
-        .prompt-card { border: 1px solid var(--border); border-radius: 4px; padding: 20px 24px; margin-bottom: 10px; background: var(--gray); }
-        .prompt-num { font-family: DM Mono, monospace; font-size: 10px; color: var(--accent); letter-spacing: 0.08em; margin-bottom: 8px; }
-        .prompt-title { font-size: 14px; font-weight: 500; color: var(--white); margin-bottom: 6px; }
-        .prompt-desc { font-size: 13px; color: var(--gray-light); line-height: 1.6; }
-        .prompt-locked { opacity: 0.35; filter: blur(2px); user-select: none; }
-        .lock-overlay { position: relative; }
-        .lock-badge { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-family: DM Mono, monospace; font-size: 10px; color: var(--accent); letter-spacing: 0.08em; background: var(--black); padding: 4px 10px; border: 1px solid var(--accent); border-radius: 2px; white-space: nowrap; }
-        .form-section { background: var(--gray); border: 1px solid var(--border); border-radius: 4px; padding: 36px 32px; margin-bottom: 64px; position: relative; overflow: hidden; }
-        .form-section:before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); }
-        .form-title { font-family: DM Serif Display, serif; font-size: 26px; font-weight: 400; color: var(--white); margin-bottom: 8px; }
-        .form-sub { font-size: 14px; color: var(--gray-light); margin-bottom: 28px; line-height: 1.6; }
-        .footer-strip { border-top: 1px solid var(--border); padding: 28px 0; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
-        .footer-logo { font-family: DM Mono, monospace; font-size: 12px; color: var(--gray-light); letter-spacing: 0.08em; }
-        .footer-links { display: flex; gap: 20px; }
-        .footer-links a { font-family: DM Mono, monospace; font-size: 11px; color: var(--gray-light); text-decoration: none; letter-spacing: 0.06em; transition: color 0.2s; }
-        .footer-links a:hover { color: var(--accent); }
-        .ticker { font-family: DM Mono, monospace; font-size: 11px; color: var(--accent); letter-spacing: 0.06em; display: flex; align-items: center; gap: 6px; margin-bottom: 40px; }
-        .ticker-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        @media (max-width: 480px) { h1 { font-size: 34px; } .form-section { padding: 24px 20px; } .stat-row { gap: 20px; } }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NovaSync Tsunami Systems | AI-Native Financial Intelligence</title>
+<style>
+:root {
+  --void: #060810;
+  --deep: #0a0f1e;
+  --surface: #0f1629;
+  --border: rgba(255,255,255,0.07);
+  --border-accent: rgba(0,210,255,0.25);
+  --cyan: #00d2ff;
+  --cyan-dim: rgba(0,210,255,0.12);
+  --cyan-glow: rgba(0,210,255,0.06);
+  --gold: #f0c040;
+  --gold-dim: rgba(240,192,64,0.12);
+  --text: #ffffff;
+  --text-mid: rgba(255,255,255,0.6);
+  --text-low: rgba(255,255,255,0.35);
+  --font-display: 'SF Pro Display',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-body: 'SF Pro Text',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --font-mono: 'SF Mono','Fira Code','JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:var(--void);color:var(--text);overflow-x:hidden;line-height:1.6;}
 
-        /* MailerLite form overrides to match our dark theme */
-        .ml-embedded { margin-top: 0 !important; }
-        .ml-embedded .ml-form-embedWrapper { background: transparent !important; border: none !important; padding: 0 !important; }
-        .ml-embedded .ml-form-embedBody { padding: 0 !important; background: transparent !important; }
-        .ml-embedded .ml-form-fieldRow input { background: #080808 !important; border: 1px solid rgba(255,255,255,0.08) !important; border-radius: 3px !important; color: #F5F3EE !important; font-family: DM Mono, monospace !important; font-size: 13px !important; padding: 13px 16px !important; }
-        .ml-embedded .ml-form-fieldRow input::placeholder { color: #888 !important; }
-        .ml-embedded .ml-form-embedSubmit button { background: #C8FF00 !important; color: #080808 !important; border: none !important; border-radius: 3px !important; font-family: Syne, sans-serif !important; font-size: 13px !important; font-weight: 700 !important; letter-spacing: 0.04em !important; padding: 13px 24px !important; cursor: pointer !important; width: 100% !important; margin-top: 10px !important; }
-        .ml-embedded .ml-form-embedSubmit button:hover { background: #d4ff1a !important; }
-        .ml-embedded .ml-form-successBody { background: transparent !important; padding: 0 !important; }
-        .ml-embedded .ml-form-successContent h4 { color: #C8FF00 !important; font-family: DM Mono, monospace !important; font-size: 11px !important; letter-spacing: 0.1em !important; }
-        .ml-embedded .ml-form-successContent p { color: #F5F3EE !important; font-size: 15px !important; }
-        .ml-embedded * { box-sizing: border-box; }
-    </style>
+/* NAV */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;justify-content:space-between;align-items:center;padding:16px 48px;background:rgba(6,8,16,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-brand{display:flex;align-items:center;gap:12px;}
+.nav-logo{width:36px;height:36px;border-radius:8px;}
+.nav-name{font-size:15px;font-weight:700;letter-spacing:0.04em;color:var(--text);}
+.nav-name span{color:var(--cyan);}
+.nav-links{display:flex;gap:32px;align-items:center;}
+.nav-links a{font-size:13px;color:var(--text-mid);text-decoration:none;letter-spacing:0.04em;transition:color 0.2s;}
+.nav-links a:hover{color:var(--text);}
+.nav-cta{background:var(--cyan-dim);border:1px solid var(--border-accent);color:var(--cyan) !important;padding:8px 20px;border-radius:8px;font-weight:600 !important;transition:all 0.2s !important;}
+.nav-cta:hover{background:rgba(0,210,255,0.2) !important;border-color:var(--cyan) !important;}
+
+/* HERO */
+.hero-wrap{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px 48px 80px;position:relative;overflow:hidden;}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,210,255,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,210,255,0.04) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;}
+.hero-radial{position:absolute;top:-200px;left:50%;transform:translateX(-50%);width:800px;height:800px;background:radial-gradient(ellipse at center,rgba(0,210,255,0.08) 0%,transparent 70%);pointer-events:none;}
+.hero-inner{max-width:860px;margin:0 auto;text-align:center;position:relative;}
+.live-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,100,0.08);border:1px solid rgba(0,255,100,0.25);color:#00ff64;padding:6px 16px;border-radius:20px;font-size:11px;font-family:var(--font-mono);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:32px;}
+.live-dot{width:6px;height:6px;background:#00ff64;border-radius:50%;animation:pulse-green 2s infinite;}
+@keyframes pulse-green{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,255,100,0.4);}50%{opacity:0.6;box-shadow:0 0 0 6px rgba(0,255,100,0);}}
+.hero-eyebrow{font-size:12px;font-family:var(--font-mono);letter-spacing:0.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:20px;}
+.hero-h1{font-family:var(--font-display);font-size:clamp(40px,6vw,72px);font-weight:800;line-height:1.05;letter-spacing:-0.03em;margin-bottom:28px;}
+.hero-h1 .accent{color:var(--cyan);}
+.hero-h1 .wave{background:linear-gradient(135deg,var(--cyan),#7b4fff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:18px;color:var(--text-mid);line-height:1.75;max-width:620px;margin:0 auto 56px;}
+.hero-stats{display:flex;justify-content:center;gap:0;margin-bottom:56px;border:1px solid var(--border);border-radius:16px;overflow:hidden;max-width:680px;margin-left:auto;margin-right:auto;margin-bottom:56px;}
+.stat-item{flex:1;padding:24px 20px;text-align:center;border-right:1px solid var(--border);background:var(--surface);}
+.stat-item:last-child{border-right:none;}
+.stat-num{font-family:var(--font-display);font-size:28px;font-weight:800;color:var(--cyan);letter-spacing:-0.02em;display:block;}
+.stat-label{font-size:11px;color:var(--text-low);text-transform:uppercase;letter-spacing:0.1em;margin-top:4px;display:block;}
+.hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{background:var(--cyan);color:#000;padding:14px 32px;border-radius:10px;font-size:15px;font-weight:700;text-decoration:none;transition:all 0.2s;letter-spacing:0.01em;}
+.btn-primary:hover{background:#33dbff;transform:translateY(-1px);}
+.btn-ghost{border:1px solid var(--border-accent);color:var(--cyan);padding:14px 32px;border-radius:10px;font-size:15px;font-weight:600;text-decoration:none;transition:all 0.2s;}
+.btn-ghost:hover{background:var(--cyan-dim);border-color:var(--cyan);}
+
+/* SECTION HEADERS */
+.section-wrap{max-width:1100px;margin:0 auto;padding:0 48px;}
+.section-header{text-align:center;margin-bottom:64px;}
+.section-eyebrow{font-size:11px;font-family:var(--font-mono);letter-spacing:0.18em;text-transform:uppercase;color:var(--cyan);margin-bottom:16px;display:block;}
+.section-h2{font-family:var(--font-display);font-size:clamp(28px,4vw,44px);font-weight:800;letter-spacing:-0.025em;line-height:1.1;margin-bottom:16px;}
+.section-sub{font-size:17px;color:var(--text-mid);max-width:560px;margin:0 auto;line-height:1.7;}
+hr.divider{border:none;border-top:1px solid var(--border);margin:0;}
+
+/* PRODUCTS */
+.products{padding:100px 0;background:var(--deep);}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+.product-card{background:var(--surface);padding:40px 32px;transition:background 0.2s;}
+.product-card:hover{background:#131929;}
+.product-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:24px;}
+.product-icon.nova{background:rgba(0,210,255,0.12);}
+.product-icon.tenant{background:rgba(240,192,64,0.12);}
+.product-icon.social{background:rgba(160,100,255,0.12);}
+.product-icon.operator{background:rgba(0,255,100,0.1);}
+.product-status{font-size:10px;font-family:var(--font-mono);letter-spacing:0.12em;text-transform:uppercase;padding:3px 10px;border-radius:12px;display:inline-block;margin-bottom:16px;}
+.status-live{background:rgba(0,255,100,0.1);color:#00ff64;border:1px solid rgba(0,255,100,0.2);}
+.status-autonomous{background:rgba(160,100,255,0.1);color:#a064ff;border:1px solid rgba(160,100,255,0.2);}
+.product-name{font-family:var(--font-display);font-size:20px;font-weight:800;margin-bottom:8px;letter-spacing:-0.01em;}
+.product-desc{font-size:14px;color:var(--text-mid);line-height:1.6;margin-bottom:20px;}
+.product-detail{font-size:12px;font-family:var(--font-mono);color:var(--text-low);}
+
+/* ARCHITECTURE */
+.architecture{padding:100px 0;background:var(--void);}
+.arch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.arch-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;transition:border-color 0.2s;}
+.arch-item:hover{border-color:var(--border-accent);}
+.arch-num{font-size:10px;font-family:var(--font-mono);color:var(--cyan);letter-spacing:0.1em;margin-bottom:8px;display:block;}
+.arch-name{font-size:13px;font-weight:600;color:var(--text);line-height:1.4;}
+
+/* MOATS */
+.moats{padding:100px 0;background:var(--deep);}
+.moats-list{display:flex;flex-direction:column;gap:1px;border:1px solid var(--border);border-radius:20px;overflow:hidden;}
+.moat-item{background:var(--surface);padding:32px 40px;display:flex;align-items:flex-start;gap:32px;transition:background 0.2s;}
+.moat-item:hover{background:#131929;}
+.moat-num{font-family:var(--font-mono);font-size:13px;color:var(--cyan);width:32px;flex-shrink:0;padding-top:2px;}
+.moat-content{}
+.moat-title{font-size:17px;font-weight:700;margin-bottom:6px;}
+.moat-desc{font-size:14px;color:var(--text-mid);line-height:1.6;}
+
+/* SIGNALS */
+.signals{padding:100px 0;background:var(--void);}
+.signals-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;margin-bottom:40px;}
+.signal-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:36px 32px;transition:all 0.2s;position:relative;}
+.signal-card:hover{border-color:var(--border-accent);}
+.signal-card.featured{background:rgba(0,210,255,0.04);border-color:rgba(0,210,255,0.2);}
+.signal-card.featured::before{content:'MOST POPULAR';position:absolute;top:-1px;left:50%;transform:translateX(-50%);background:var(--cyan);color:#000;font-size:10px;font-family:var(--font-mono);font-weight:700;letter-spacing:0.12em;padding:4px 16px;border-radius:0 0 8px 8px;}
+.signal-tier{font-size:11px;font-family:var(--font-mono);letter-spacing:0.1em;text-transform:uppercase;color:var(--text-low);margin-bottom:12px;}
+.signal-name{font-family:var(--font-display);font-size:22px;font-weight:800;margin-bottom:8px;}
+.signal-price{font-size:40px;font-weight:800;color:var(--cyan);letter-spacing:-0.02em;margin-bottom:4px;}
+.signal-price sup{font-size:20px;font-weight:600;}
+.signal-price sub{font-size:16px;font-weight:400;color:var(--text-low);}
+.signal-tagline{font-size:13px;color:var(--text-mid);margin-bottom:28px;line-height:1.5;}
+.signal-features{list-style:none;margin-bottom:32px;}
+.signal-features li{font-size:13px;color:var(--text-mid);padding:8px 0;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:10px;line-height:1.5;}
+.signal-features li::before{content:'';width:5px;height:5px;background:var(--cyan);border-radius:50%;flex-shrink:0;margin-top:6px;}
+.btn-signal{display:block;width:100%;padding:14px;border-radius:10px;font-size:14px;font-weight:700;text-align:center;text-decoration:none;transition:all 0.2s;font-family:var(--font-body);}
+.btn-signal-solid{background:var(--cyan);color:#000;}
+.btn-signal-solid:hover{background:#33dbff;}
+.btn-signal-outline{border:1px solid var(--border-accent);color:var(--cyan);background:transparent;}
+.btn-signal-outline:hover{background:var(--cyan-dim);}
+.signals-disclaimer{font-size:12px;color:var(--text-low);text-align:center;max-width:700px;margin:0 auto;line-height:1.7;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+
+/* RAISE */
+.raise{padding:100px 0;background:var(--deep);}
+.raise-card{background:var(--void);border:1px solid var(--border-accent);border-radius:24px;padding:64px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;}
+.raise-label{font-size:11px;font-family:var(--font-mono);letter-spacing:0.18em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:block;}
+.raise-h2{font-family:var(--font-display);font-size:clamp(28px,3.5vw,42px);font-weight:800;letter-spacing:-0.025em;line-height:1.1;margin-bottom:20px;}
+.raise-desc{font-size:16px;color:var(--text-mid);line-height:1.75;margin-bottom:36px;}
+.raise-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.raise-stat{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px 24px;}
+.raise-stat-num{font-family:var(--font-display);font-size:24px;font-weight:800;color:var(--gold);display:block;margin-bottom:4px;}
+.raise-stat-label{font-size:12px;color:var(--text-low);text-transform:uppercase;letter-spacing:0.08em;}
+.raise-timeline{}
+.timeline-title{font-size:14px;font-weight:600;color:var(--text-mid);margin-bottom:20px;font-family:var(--font-mono);letter-spacing:0.06em;text-transform:uppercase;}
+.timeline-items{display:flex;flex-direction:column;gap:0;}
+.t-item{display:flex;gap:20px;padding:16px 0;border-bottom:1px solid var(--border);align-items:flex-start;}
+.t-item:last-child{border-bottom:none;}
+.t-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:6px;}
+.t-dot.done{background:#00ff64;}
+.t-dot.pending{background:var(--cyan);}
+.t-dot.future{background:var(--border);border:1px solid var(--text-low);}
+.t-date{font-size:11px;font-family:var(--font-mono);color:var(--text-low);width:80px;flex-shrink:0;padding-top:2px;}
+.t-text{font-size:14px;color:var(--text-mid);line-height:1.5;}
+.t-text strong{color:var(--text);font-weight:600;}
+
+/* STACK SECTION */
+.stack-section{padding:80px 0;background:var(--void);}
+.stack-row{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;margin-bottom:16px;}
+.stack-tag{font-size:13px;font-family:var(--font-mono);color:var(--text-mid);background:var(--surface);border:1px solid var(--border);padding:8px 18px;border-radius:20px;}
+.stack-tag.highlight{color:var(--cyan);border-color:var(--border-accent);background:var(--cyan-dim);}
+
+/* OPERATOR STACK */
+.operator{padding:80px 0;background:var(--deep);}
+.op-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.op-tier{background:var(--surface);padding:36px 28px;text-align:center;}
+.op-name{font-size:18px;font-weight:800;margin-bottom:8px;}
+.op-price{font-size:32px;font-weight:800;color:var(--cyan);margin-bottom:16px;}
+.op-btn{display:inline-block;padding:11px 24px;border-radius:8px;font-size:13px;font-weight:700;text-decoration:none;border:1px solid var(--border-accent);color:var(--cyan);transition:all 0.2s;}
+.op-btn:hover{background:var(--cyan-dim);}
+
+/* FREE PROMPTS */
+.free-section{padding:80px 0;background:var(--void);}
+.free-form{max-width:480px;margin:0 auto;display:flex;flex-direction:column;gap:12px;}
+.free-form input{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;color:var(--text);font-size:15px;outline:none;width:100%;transition:border-color 0.2s;}
+.free-form input:focus{border-color:var(--border-accent);}
+.free-form button{background:var(--cyan);color:#000;border:none;border-radius:10px;padding:14px;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.2s;}
+.free-form button:hover{background:#33dbff;}
+
+/* FOOTER */
+.footer{padding:48px;background:var(--deep);border-top:1px solid var(--border);text-align:center;}
+.footer-brand{display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:20px;}
+.footer-logo{width:28px;height:28px;border-radius:6px;}
+.footer-name{font-size:14px;font-weight:700;color:var(--text);}
+.footer-links{display:flex;gap:24px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;}
+.footer-links a{font-size:13px;color:var(--text-low);text-decoration:none;transition:color 0.2s;}
+.footer-links a:hover{color:var(--text);}
+.footer-legal{font-size:12px;color:var(--text-low);max-width:700px;margin:0 auto;line-height:1.7;}
+
+@media(max-width:768px){
+  .nav{padding:16px 20px;}
+  .nav-links{display:none;}
+  .hero-wrap{padding:100px 20px 60px;}
+  .hero-stats{flex-direction:column;gap:0;}
+  .stat-item{border-right:none;border-bottom:1px solid var(--border);}
+  .stat-item:last-child{border-bottom:none;}
+  .products-grid{grid-template-columns:1fr;}
+  .arch-grid{grid-template-columns:repeat(2,1fr);}
+  .raise-card{grid-template-columns:1fr;gap:40px;padding:32px 24px;}
+  .op-grid{grid-template-columns:1fr;}
+  .section-wrap{padding:0 20px;}
+  .moat-item{flex-direction:column;gap:12px;padding:24px 20px;}
+}
+</style>
 </head>
 <body>
-    <div class="grain"></div>
-    <div class="grid-bg"></div>
 
-    <div class="wrapper">
-        <nav>
-            <div class="logo">NOVASYNC</div>
-            <div class="nav-tag">OPERATOR STACK</div>
-        </nav>
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">
+    <img class="nav-logo" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAMCAggICAgDCAgIAwgECAgICAgIBwgIBwYICAgHCAgIBwcICAgICA4ICAgIBw0IBwgIDwoOCAcNDwoJDQcICQgBAwQEBgUGCgYGCg0NCg0ODQ0NDQ0ODQ0NDQ0ODg4NDQ0NDQ0NDQ4NDg0NDRANDw0NDQ8ODg4ODQ0NDQ0NEQ4ODf/AABEIADwAPAMBEQACEQEDEQH/xAAcAAADAAEFAAAAAAAAAAAAAAAAAQIDBQYHCAn/xAA2EAACAQMABgYHCQEAAAAAAAABAgMABBEFEiExQVEHE3GBkaEiIzJhscHRCBQVFkJScoLwBv/EABwBAQEAAwADAQAAAAAAAAAAAAABAgUGAwQIB//EAC8RAAIBAgQEBAQHAAAAAAAAAAABAgMRBCExQQUSUWEiMnGhExSxwQZSc4GRwvH/2gAMAwEAAhEDEQA/APOet6aUKAWe6gEJBzqXMrDDjnmrcjQ6ECgChQoQlm4b80KkIR8T6X+5VLC5WKpBFB20KhYx7x8KmhS6piFABNARGP1fuojJmQcvjw8fdtzQhqeg9ErN16mQwGzt5Z1CW0s5lkTV6u3IhRzB12WxcThUTV9L2hUuvb/P56vLq0eGrUdPk8N+aSj5oxsne8/F5uX8sfE75Gma2RrghweWNvYVyDyyD3CiZ52raiI86pCE2ej4VEH1LqkIl3GoyrUoVSG/OjzohuNIukaT2ejI5tUtJJeW0k0abM4sYZZLouM64imihB1QGeMNke9h8FWxEkoJera+l75dMjn+Kcdw/DYSlOFSUlolTmot/qSiocvWUZS7JnoT/wA9cQ6L0PNonQ0AebR1s7QQkKst7Oq515X3SPKwyzsTgncAAK3tTASw0Mo3sn+7tu+73PnLEYyrxDGqrjp2U5xUpLNU4OST5VsoR0Xbc6D6a0npC9uvzheWFnZNbsfvMt3aNZaPu3IZUF1A7IZ5NrIfu2s74h11PVFn52FOc26koq2V3K8Y+ju7tvpG70uj6GofKYWh8lQxFSfMvAqc41a0UrNuEoxajHvO0Vd2eeXG0tuE9SHW7CDGuvWYbBIz6yON/FBXr2tle/fP7pfQ6fm5s2muzt/VyXuYW3jv+VY7mWxdUxJcbCKMqAHO3nQGRTtDeyVKsrA4Ksu4qw2qRtwy4IODwqWLfJrZ5NbNdGt0+h2D6P8A7TtykTWtxb/jL6PgeYzrcRwO8UONZpUl1VZgCu23Z2kOSIthrrcLxup8Nwqw53FNuSaTaWraf2ze0T8q4p+C6E6qqUKvw4zmo8ji5JSloouOidn5kox3locZdKnSzc6VnW/uMQJbjEECszpFnGWLMFMjPgAyFVGAFUDLZ0GLxc8TPmlklpFaLr6t9fZHa8F4Jh+E0nTo5yl55tWcraKy0itld55tvbY5G7s+Zr0jfEcf4j41Ny7F1SBQEZx2HyqaGWpee+qQYfhu7z9aWF7AW44Hn9aAh3/sTQII186IMqhAoAoCNTG7wqWMg1zy86ZiyEc+5fOmYyKSPG3fVsS5VCBQBQCJoAoB0As0AA0AZoWw6EP/2Q==" alt="NovaSync">
+    <span class="nav-name">Nova<span>Sync</span> Tsunami</span>
+  </div>
+  <div class="nav-links">
+    <a href="#products">Products</a>
+    <a href="#signals">Signals</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#raise">Investors</a>
+    <a href="#signals" class="nav-cta">Subscribe</a>
+  </div>
+</nav>
 
-        <section class="hero">
-            <div class="eyebrow">Free prompt pack</div>
-            <h1>Five prompts.<br><em>Real intelligence.</em><br>Zero cost.</h1>
-            <p class="hero-body">
-                I built a live multi-agent AI trading system on Hyperliquid mainnet from scratch. <strong>No fund. No team.</strong> BTC, ETH, SOL, XRP, LINK perps running 24/7 at 20x leverage. These are five prompts extracted directly from that build. The same thinking tools behind a real operational system.
-            </p>
-            <div class="ticker">
-                <div class="ticker-dot"></div>
-                NOVA CORE -- LIVE ON HYPERLIQUID MAINNET
-            </div>
-            <div class="stat-row">
-                <div class="stat"><div class="stat-val">5</div><div class="stat-label">Live symbols</div></div>
-                <div class="stat-divider"></div>
-                <div class="stat"><div class="stat-val">20x</div><div class="stat-label">Leverage</div></div>
-                <div class="stat-divider"></div>
-                <div class="stat"><div class="stat-val">24/7</div><div class="stat-label">Operational</div></div>
-                <div class="stat-divider"></div>
-                <div class="stat"><div class="stat-val">1</div><div class="stat-label">Founder</div></div>
-            </div>
-        </section>
-
-        <section class="prompts-section">
-            <div class="section-label">What you're getting</div>
-            <div class="prompt-card" id="p1">
-                <div class="prompt-num">PROMPT 01 -- QUANT ARCHITECTURE</div>
-                <div class="prompt-title">Regime Detection Framework</div>
-                <div class="prompt-desc">How to frame a market regime detection problem so your AI system stops getting caught on the wrong side of structural shifts.</div>
-            </div>
-            <div class="prompt-card" id="p2">
-                <div class="prompt-num">PROMPT 02 -- RISK ARCHITECTURE</div>
-                <div class="prompt-title">Position Sizing Under Uncertainty</div>
-                <div class="prompt-desc">The exact thinking framework behind Kelly-based conviction sizing when your signal confidence is partial and the market is adversarial.</div>
-            </div>
-            <div class="prompt-card" id="p3">
-                <div class="prompt-num">PROMPT 03 -- CAPITAL AND PITCH</div>
-                <div class="prompt-title">Structuring Your Trading Operation for Capital</div>
-                <div class="prompt-desc">How to frame a solo quant operation for a serious raise conversation without institutional infrastructure behind you.</div>
-            </div>
-            <div class="lock-overlay" id="p4-wrap">
-                <div class="prompt-card prompt-locked" id="p4">
-                    <div class="prompt-num">PROMPT 04 -- DEFI OPERATIONS</div>
-                    <div class="prompt-title">Live Protocol Management</div>
-                    <div class="prompt-desc">Execution logic and position management frameworks for live DeFi protocol interaction under market pressure.</div>
-                </div>
-                <div class="lock-badge">UNLOCKED ON SUBMIT</div>
-            </div>
-            <div class="lock-overlay" id="p5-wrap">
-                <div class="prompt-card prompt-locked" id="p5">
-                    <div class="prompt-num">PROMPT 05 -- OUTREACH AND BD</div>
-                    <div class="prompt-title">Opening Institutional Doors</div>
-                    <div class="prompt-desc">The BD framework for approaching funds, DAOs, and institutional counterparties as a solo operator with a live system.</div>
-                </div>
-                <div class="lock-badge">UNLOCKED ON SUBMIT</div>
-            </div>
-        </section>
-
-        <section class="form-section">
-            <div class="form-title">Get all five free.</div>
-            <p class="form-sub">Drop your email. The full pack lands in your inbox immediately. No sequences. No noise. Just the prompts.</p>
-            <div class="ml-embedded" data-form="WqFguC"></div>
-        </section>
-
-        <footer class="footer-strip">
-            <div class="footer-logo">NOVASYNC TSUNAMI SYSTEMS</div>
-            <div class="footer-links">
-                <a href="https://novatsunami.gumroad.com" target="_blank">Gumroad</a>
-                <a href="https://www.linkedin.com/in/rudwaan-wharwood-aa26b32a2" target="_blank">LinkedIn</a>
-            </div>
-        </footer>
+<!-- HERO -->
+<div class="hero-wrap">
+  <div class="hero-grid"></div>
+  <div class="hero-radial"></div>
+  <div class="hero-inner">
+    <div class="live-badge"><span class="live-dot"></span>Nova Core live on Hyperliquid mainnet</div>
+    <div class="hero-eyebrow">Margate, UK &nbsp;/&nbsp; Founded 2026 &nbsp;/&nbsp; Solo Operator</div>
+    <h1 class="hero-h1">
+      Intelligence built at the<br>
+      <span class="wave">edge of the wave</span>
+    </h1>
+    <p class="hero-sub">Four AI-native products. One architecture. A live algorithmic trading system, property SaaS, autonomous content engine, and 21 proprietary architectures -- built alone, from Margate.</p>
+    <div class="hero-stats">
+      <div class="stat-item">
+        <span class="stat-num">21</span>
+        <span class="stat-label">Proprietary ARCHs</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">4</span>
+        <span class="stat-label">Live Products</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">11</span>
+        <span class="stat-label">Security Layers</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">48</span>
+        <span class="stat-label">Symbols Tracked</span>
+      </div>
     </div>
+    <div class="hero-actions">
+      <a href="#signals" class="btn-primary">Get Nova Signals</a>
+      <a href="#raise" class="btn-ghost">Investor Deck</a>
+    </div>
+  </div>
+</div>
 
-    <script>
-        const cards = document.querySelectorAll('.prompt-card:not(.prompt-locked)');
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach((entry, i) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => entry.target.classList.add('visible'), i * 100);
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, { threshold: 0.1 });
-        cards.forEach(c => observer.observe(c));
-        setTimeout(() => {
-            cards.forEach((c, i) => setTimeout(() => c.classList.add('visible'), i * 120));
-        }, 300);
-    </script>
+<hr class="divider">
+
+<!-- PRODUCTS -->
+<section class="products" id="products">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-eyebrow">The Stack</span>
+      <h2 class="section-h2">Four products. One flywheel.</h2>
+      <p class="section-sub">Each product feeds the next. Trading builds the track record. Content builds the audience. The audience becomes subscribers. Subscribers become investors.</p>
+    </div>
+    <div class="products-grid">
+      <div class="product-card">
+        <div class="product-icon nova">⚡</div>
+        <span class="product-status status-live">Live</span>
+        <div class="product-name">Nova Core</div>
+        <div class="product-desc">Institutional-grade algorithmic trading on Hyperliquid perpetuals. HMM regime detection, Bayesian conviction engine, 3-layer quantum execution core.</div>
+        <div class="product-detail">48 symbols / 21 ARCHs / post-quantum security</div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon tenant">🏠</div>
+        <span class="product-status status-live">Live</span>
+        <div class="product-name">TenantStack</div>
+        <div class="product-desc">AI-powered property management SaaS for UK private landlords. Renters Rights Act 2025 compliance built in. 2.6M landlord TAM.</div>
+        <div class="product-detail">mytenantstack.co.uk / FastAPI + MongoDB</div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon social">📡</div>
+        <span class="product-status status-autonomous">Autonomous</span>
+        <div class="product-name">SocialSync</div>
+        <div class="product-desc">World state to published post. Zero human input. Nova's live signals feed the content engine. The audience it builds today is the subscriber base tomorrow.</div>
+        <div class="product-detail">X / LinkedIn / Whop / NCL compliance gate</div>
+      </div>
+      <div class="product-card">
+        <div class="product-icon operator">📋</div>
+        <span class="product-status status-live">Live</span>
+        <div class="product-name">Operator Stack</div>
+        <div class="product-desc">81 proprietary prompts across 5 modules. Extracted from real institutional-grade infrastructure. For founders, quants, and operators.</div>
+        <div class="product-detail">Core £59 / Pro £129 / Institutional £297</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ARCHITECTURE -->
+<section class="architecture" id="architecture">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-eyebrow">UKIPO Provisional Filing Pending</span>
+      <h2 class="section-h2">21 Proprietary Architectures</h2>
+      <p class="section-sub">Every architecture timestamped. Every decision documented in the Ars Diabolica -- a 6,000+ line living source of truth.</p>
+    </div>
+    <div class="arch-grid">
+      <div class="arch-item"><span class="arch-num">ARCH-001</span><div class="arch-name">Nova Core Modular Monolith Platform Kernel</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-002</span><div class="arch-name">ConvictionEngine Bayesian Multi-Signal Synthesiser</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-003</span><div class="arch-name">Black Swan Module 5-Mode Crisis Response System</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-004</span><div class="arch-name">NCI Meta-Intelligence Synthesiser</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-005</span><div class="arch-name">NPE Unified Perception Engine</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-006</span><div class="arch-name">NCL Dual-Gate Compliance Architecture</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-007</span><div class="arch-name">NEIE Cross-Product Event Intelligence</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-008</span><div class="arch-name">NSS Olympus 11-Layer Security Organism</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-009</span><div class="arch-name">UEL Unified Execution Layer</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-010</span><div class="arch-name">Girardian Market Intelligence Framework</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-011</span><div class="arch-name">Nova Spot Signal Inversion Twin Agent</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-012</span><div class="arch-name">Nova Quantum Execution Core (NQEC)</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-013</span><div class="arch-name">Dynamic Symbol Selection with Rotation Gate</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-014</span><div class="arch-name">Girardian Collective Alignment Signal</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-015</span><div class="arch-name">Mode D0 Phase Transition Early Warning</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-016</span><div class="arch-name">NSS-Ulysses Sovereign Offline Protocol</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-017</span><div class="arch-name">Auto Sim/Live Switch</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-018</span><div class="arch-name">Cerberus API Guardian</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-019</span><div class="arch-name">Nova Compliance Layer</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-020</span><div class="arch-name">NSS-Aegis v2 File Intelligence Monitor</div></div>
+      <div class="arch-item"><span class="arch-num">ARCH-021</span><div class="arch-name">Morpheus AI Worm Class Simulator</div></div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- MOATS -->
+<section class="moats">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-eyebrow">Competitive Position</span>
+      <h2 class="section-h2">Five moats. None borrowed.</h2>
+    </div>
+    <div class="moats-list">
+      <div class="moat-item">
+        <span class="moat-num">01</span>
+        <div class="moat-content">
+          <div class="moat-title">The Girardian Framework</div>
+          <div class="moat-desc">Nova reads markets through Rene Girard's mimetic theory. Momentum is mimetic desire propagation. Liquidation cascades are scapegoat sacrifices. Mode D fires before the event by detecting the loaded gun -- the pattern of collective preparation for sacrifice. No other trading system is built on this foundation.</div>
+        </div>
+      </div>
+      <div class="moat-item">
+        <span class="moat-num">02</span>
+        <div class="moat-content">
+          <div class="moat-title">21 Proprietary Architectures</div>
+          <div class="moat-desc">ARCH-001 through ARCH-021. Every architecture timestamped, documented, and filed. From the NQEC quantum execution core to the Morpheus AI worm simulator. A patent portfolio built before the raise, not after.</div>
+        </div>
+      </div>
+      <div class="moat-item">
+        <span class="moat-num">03</span>
+        <div class="moat-content">
+          <div class="moat-title">NSS Olympus -- 11-Layer Security Organism</div>
+          <div class="moat-desc">Post-quantum cryptography (CRYSTALS-Kyber, CRYSTALS-Dilithium, SPHINCS+) from day one. AI worm class simulation live. Self-attacking every 6 hours. Growing stronger from every attack. No pre-seed has this depth of security infrastructure.</div>
+        </div>
+      </div>
+      <div class="moat-item">
+        <span class="moat-num">04</span>
+        <div class="moat-content">
+          <div class="moat-title">USDT Systemic Risk Position</div>
+          <div class="moat-desc">The thesis is operationalised, not just documented. USDT health monitored every 60 seconds on Bitrue. Mode E fires automatically on WARNING+ deviation. Perps collateral in USDC only. Nova is structurally positioned for the event most of the market pretends cannot happen.</div>
+        </div>
+      </div>
+      <div class="moat-item">
+        <span class="moat-num">05</span>
+        <div class="moat-content">
+          <div class="moat-title">The Ars Diabolica</div>
+          <div class="moat-desc">6,000+ line living document. Every architectural decision justified. Every session recorded. The source of truth for everything NovaSync builds. An investor reading the Ars Diabolica is reading the mind of the system -- not a pitch deck, not a white paper. The actual thinking.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- SIGNALS -->
+<section class="signals" id="signals">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-eyebrow">Nova Signals -- Live</span>
+      <h2 class="section-h2">Nova's intelligence. Your decision.</h2>
+      <p class="section-sub">Three tiers of access to Nova's live algorithmic output. Stripe-automated onboarding. API key delivered by email. No human in the loop.</p>
+    </div>
+    <div class="signals-grid">
+      <div class="signal-card">
+        <div class="signal-tier">Tier 1</div>
+        <div class="signal-name">Nova Signals</div>
+        <div class="signal-price"><sup>£</sup>29<sub>/mo</sub></div>
+        <div class="signal-tagline">Live regime state, direction, and confidence. Updated every 5 minutes.</div>
+        <ul class="signal-features">
+          <li>Live HMM regime state (bull/bear/ranging)</li>
+          <li>Signal direction and conviction score</li>
+          <li>Black Swan mode status</li>
+          <li>5-minute updates</li>
+          <li>API key delivered by email</li>
+        </ul>
+        <a href="https://whop.com/novasync-tsunami-systems/nova-signals-tier-1" class="btn-signal btn-signal-outline">Subscribe -- £29/mo</a>
+      </div>
+      <div class="signal-card featured">
+        <div class="signal-tier">Tier 2</div>
+        <div class="signal-name">Nova Intelligence</div>
+        <div class="signal-price"><sup>£</sup>79<sub>/mo</sub></div>
+        <div class="signal-tagline">Full signal feed with Kelly sizing, entry/exit targets, and macro context.</div>
+        <ul class="signal-features">
+          <li>Everything in Nova Signals</li>
+          <li>Kelly sizing fractions per symbol</li>
+          <li>Entry levels and exit targets</li>
+          <li>Full confluence breakdown</li>
+          <li>NPE macro regime context</li>
+          <li>10 enriched Tier 2 signal fields</li>
+        </ul>
+        <a href="https://whop.com/novasync-tsunami-systems/nova-intelligence-tier-2" class="btn-signal btn-signal-solid">Subscribe -- £79/mo</a>
+      </div>
+      <div class="signal-card">
+        <div class="signal-tier">Tier 3</div>
+        <div class="signal-name">Nova API</div>
+        <div class="signal-price"><sup>£</sup>249<sub>/mo</sub></div>
+        <div class="signal-tagline">Programmatic access. Wire Nova's intelligence directly into your system.</div>
+        <ul class="signal-features">
+          <li>Complete raw signal feed via REST API</li>
+          <li>SymbolRanker scores per symbol</li>
+          <li>Prior state and Bayesian data</li>
+          <li>JSON output, rate limited</li>
+          <li>Full API documentation</li>
+          <li>For builders and funds</li>
+        </ul>
+        <a href="https://whop.com/novasync-tsunami-systems/nova-api-tier-3" class="btn-signal btn-signal-outline">Subscribe -- £249/mo</a>
+      </div>
+    </div>
+    <div class="signals-disclaimer">
+      Algorithmic intelligence only. Not financial advice. Not FCA regulated. Trading involves risk. You may lose more than you invest. NovaSync Tsunami Systems is not authorised by the Financial Conduct Authority. By subscribing you confirm you are a sophisticated or high net worth investor under FSMA 2000 s.48/49.
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- RAISE -->
+<section class="raise" id="raise">
+  <div class="section-wrap">
+    <div class="raise-card">
+      <div>
+        <span class="raise-label">Pre-Seed Round -- August 2026</span>
+        <h2 class="raise-h2">£300K at £1.8M pre-money. SEIS qualifying.</h2>
+        <p class="raise-desc">The engine is built and running. Nova generated 9 signals at 94% average conviction in its first 11 days live -- capital-constrained, not signal-constrained. The raise puts fuel in the tank of a proven system and activates four simultaneous revenue streams that are already built and waiting.</p>
+        <div class="raise-stats">
+          <div class="raise-stat">
+            <span class="raise-stat-num">£300K</span>
+            <span class="raise-stat-label">Raise target</span>
+          </div>
+          <div class="raise-stat">
+            <span class="raise-stat-num">£1.8M</span>
+            <span class="raise-stat-label">Pre-money valuation</span>
+          </div>
+          <div class="raise-stat">
+            <span class="raise-stat-num">SEIS</span>
+            <span class="raise-stat-label">EIS qualifying</span>
+          </div>
+          <div class="raise-stat">
+            <span class="raise-stat-num">Aug 26</span>
+            <span class="raise-stat-label">Window opens</span>
+          </div>
+        </div>
+        <div style="margin-top:32px;">
+          <div style="font-size:12px;font-family:var(--font-mono);color:var(--text-low);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px;">Deployment Breakdown</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+              <span style="font-size:13px;color:var(--text-mid);">Nova trading capital</span>
+              <span style="font-size:13px;font-weight:700;color:var(--cyan);font-family:var(--font-mono);">£80K</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+              <span style="font-size:13px;color:var(--text-mid);">Nova Signals subscriber acquisition</span>
+              <span style="font-size:13px;font-weight:700;color:var(--cyan);font-family:var(--font-mono);">£40K</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+              <span style="font-size:13px;color:var(--text-mid);">TenantStack marketing</span>
+              <span style="font-size:13px;font-weight:700;color:var(--cyan);font-family:var(--font-mono);">£40K</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+              <span style="font-size:13px;color:var(--text-mid);">Founder salary (12 months)</span>
+              <span style="font-size:13px;font-weight:700;color:var(--cyan);font-family:var(--font-mono);">£50K</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+              <span style="font-size:13px;color:var(--text-mid);">VPS + infrastructure scaling</span>
+              <span style="font-size:13px;font-weight:700;color:var(--cyan);font-family:var(--font-mono);">£30K</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+              <span style="font-size:13px;color:var(--text-mid);">Nova Spot Phase 1 capital</span>
+              <span style="font-size:13px;font-weight:700;color:var(--cyan);font-family:var(--font-mono);">£20K</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+              <span style="font-size:13px;color:var(--text-mid);">Hardware (T490 + local LLM)</span>
+              <span style="font-size:13px;font-weight:700;color:var(--cyan);font-family:var(--font-mono);">£20K</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 16px;background:var(--surface);border:1px solid var(--border);border-radius:8px;">
+              <span style="font-size:13px;color:var(--text-mid);">Legal + SEIS + IP filing (21 ARCHs)</span>
+              <span style="font-size:13px;font-weight:700;color:var(--cyan);font-family:var(--font-mono);">£20K</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="raise-timeline">
+        <div class="timeline-title">Build Timeline</div>
+        <div class="timeline-items">
+          <div class="t-item">
+            <span class="t-dot done"></span>
+            <span class="t-date">May 31</span>
+            <span class="t-text"><strong>Nova Core live.</strong> First trade placed on Hyperliquid mainnet. 9 signals fired at 94% avg conviction.</span>
+          </div>
+          <div class="t-item">
+            <span class="t-dot done"></span>
+            <span class="t-date">Jun 9</span>
+            <span class="t-text"><strong>Signals product live.</strong> Three Stripe tiers, Cerberus API guardian, fully automated onboarding.</span>
+          </div>
+          <div class="t-item">
+            <span class="t-dot done"></span>
+            <span class="t-date">Jun 11</span>
+            <span class="t-text"><strong>Quantum stack + observability complete.</strong> D-Wave LaunchPad applied. Langfuse wired. ARCH-021 Morpheus AI worm simulator live. UEL Phase 2 built.</span>
+          </div>
+          <div class="t-item">
+            <span class="t-dot pending"></span>
+            <span class="t-date">Jul 2026</span>
+            <span class="t-text"><strong>Track record building.</strong> Nova Signals soft launch. Incorporation and SEIS advance assurance filed.</span>
+          </div>
+          <div class="t-item">
+            <span class="t-dot future"></span>
+            <span class="t-date">Aug 2026</span>
+            <span class="t-text"><strong>Raise window opens.</strong> SEIS advance assurance confirmed. Investor conversations active.</span>
+          </div>
+          <div class="t-item">
+            <span class="t-dot future"></span>
+            <span class="t-date">Q4 2026</span>
+            <span class="t-text"><strong>Funded.</strong> All four revenue streams fully capitalised. Nova Spot Phase 1 live.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:40px;">
+      <a href="mailto:novasync.tsunami.systems@gmail.com?subject=NovaSync Pre-Seed Enquiry" class="btn-primary">Request Investor Pack</a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- TECH STACK -->
+<section class="stack-section">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-eyebrow">Technology</span>
+      <h2 class="section-h2">Built on serious infrastructure.</h2>
+    </div>
+    <div class="stack-row">
+      <span class="stack-tag highlight">Python 3.12</span>
+      <span class="stack-tag highlight">Hyperliquid Perpetuals</span>
+      <span class="stack-tag highlight">D-Wave Quantum (LaunchPad)</span>
+      <span class="stack-tag highlight">PennyLane VQE/QAOA</span>
+      <span class="stack-tag">FastAPI</span>
+      <span class="stack-tag">MongoDB Atlas</span>
+    </div>
+    <div class="stack-row">
+      <span class="stack-tag">Stripe Webhooks</span>
+      <span class="stack-tag">Brevo Email</span>
+      <span class="stack-tag">Cloudflare Tunnel</span>
+      <span class="stack-tag highlight">CRYSTALS-Kyber (Post-Quantum)</span>
+      <span class="stack-tag highlight">ChromaDB</span>
+      <span class="stack-tag">Claude API</span>
+    </div>
+    <div class="stack-row">
+      <span class="stack-tag">Langfuse Observability</span>
+      <span class="stack-tag">Publer API</span>
+      <span class="stack-tag">HMM Regime Detection</span>
+      <span class="stack-tag highlight">Kalman Filter</span>
+      <span class="stack-tag">Bayesian Kelly Sizing</span>
+      <span class="stack-tag">SQLite + SPHINCS+ Audit Chain</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- OPERATOR STACK -->
+<section class="operator">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-eyebrow">Operator Stack</span>
+      <h2 class="section-h2">81 production prompts. Three tiers.</h2>
+      <p class="section-sub">Extracted from real institutional-grade infrastructure. Not theoretical. Not generic. Built in the same fire as Nova.</p>
+    </div>
+    <div class="op-grid">
+      <div class="op-tier">
+        <div class="op-name">Core</div>
+        <div class="op-price">£59</div>
+        <a href="https://novatsunami.gumroad.com/" class="op-btn">Get on Gumroad</a>
+      </div>
+      <div class="op-tier" style="background:#131929;">
+        <div class="op-name">Pro</div>
+        <div class="op-price">£129</div>
+        <a href="https://novatsunami.gumroad.com/" class="op-btn">Get on Gumroad</a>
+      </div>
+      <div class="op-tier">
+        <div class="op-name">Institutional</div>
+        <div class="op-price">£297</div>
+        <a href="https://novatsunami.gumroad.com/" class="op-btn">Get on Gumroad</a>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:24px;">
+      <a href="https://whop.com/novasync-tsunami-systems" class="btn-ghost">Also on Whop</a>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FREE PROMPTS -->
+<section class="free-section" id="free">
+  <div class="section-wrap">
+    <div class="section-header">
+      <span class="section-eyebrow">Free</span>
+      <h2 class="section-h2">5 prompts from real infrastructure.</h2>
+      <p class="section-sub">No card required. Zero cost. Extracted from the same stack that runs Nova Core live on Hyperliquid mainnet.</p>
+    </div>
+    <form class="free-form" id="sib-form" method="POST" action="https://02406812.sibforms.com/serve/MUIFAPgS5QwxWlLzOhMC9RnNv1MoUmBhqij0EmR75UnuZiCA21Ez98XPVgwiM9B9H_VaLM5groi9DHUgG1_a1uqavryei1HGs0vavj0_4NLhHtt4XmcaQXcbuUUIDBJAL9GaMy3RHnWFvK2s9wjIvfgqxYhaSOj6vDpf_gTccquIRuf1fUHrfRhSUmyxeXF15MoQciG50q6rvyZClw==" data-type="subscription">
+      <input type="text" name="EMAIL" placeholder="Your email address" required autocomplete="off">
+      <input type="text" name="email_address_check" value="" style="display:none;">
+      <input type="hidden" name="locale" value="en">
+      <button type="submit">Send me the free pack</button>
+    </form>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-brand">
+    <img class="footer-logo" src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAMCAggICAgDCAgIAwgECAgICAgIBwgIBwYICAgHCAgIBwcICAgICA4ICAgIBw0IBwgIDwoOCAcNDwoJDQcICQgBAwQEBgUGCgYGCg0NCg0ODQ0NDQ0ODQ0NDQ0ODg4NDQ0NDQ0NDQ4NDg0NDRANDw0NDQ8ODg4ODQ0NDQ0NEQ4ODf/AABEIADwAPAMBEQACEQEDEQH/xAAcAAADAAEFAAAAAAAAAAAAAAAAAQIDBQYHCAn/xAA2EAACAQMABgYHCQEAAAAAAAABAgMABBEFEiExQVEHE3GBkaEiIzJhscHRCBQVFkJScoLwBv/EABwBAQEAAwADAQAAAAAAAAAAAAABAgUGAwQIB//EAC8RAAIBAgQEBAQHAAAAAAAAAAABAgMRBCExQQUSUWEiMnGhExSxwQZSc4GRwvH/2gAMAwEAAhEDEQA/APOet6aUKAWe6gEJBzqXMrDDjnmrcjQ6ECgChQoQlm4b80KkIR8T6X+5VLC5WKpBFB20KhYx7x8KmhS6piFABNARGP1fuojJmQcvjw8fdtzQhqeg9ErN16mQwGzt5Z1CW0s5lkTV6u3IhRzB12WxcThUTV9L2hUuvb/P56vLq0eGrUdPk8N+aSj5oxsne8/F5uX8sfE75Gma2RrghweWNvYVyDyyD3CiZ52raiI86pCE2ej4VEH1LqkIl3GoyrUoVSG/OjzohuNIukaT2ejI5tUtJJeW0k0abM4sYZZLouM64imihB1QGeMNke9h8FWxEkoJera+l75dMjn+Kcdw/DYSlOFSUlolTmot/qSiocvWUZS7JnoT/wA9cQ6L0PNonQ0AebR1s7QQkKst7Oq515X3SPKwyzsTgncAAK3tTASw0Mo3sn+7tu+73PnLEYyrxDGqrjp2U5xUpLNU4OST5VsoR0Xbc6D6a0npC9uvzheWFnZNbsfvMt3aNZaPu3IZUF1A7IZ5NrIfu2s74h11PVFn52FOc26koq2V3K8Y+ju7tvpG70uj6GofKYWh8lQxFSfMvAqc41a0UrNuEoxajHvO0Vd2eeXG0tuE9SHW7CDGuvWYbBIz6yON/FBXr2tle/fP7pfQ6fm5s2muzt/VyXuYW3jv+VY7mWxdUxJcbCKMqAHO3nQGRTtDeyVKsrA4Ksu4qw2qRtwy4IODwqWLfJrZ5NbNdGt0+h2D6P8A7TtykTWtxb/jL6PgeYzrcRwO8UONZpUl1VZgCu23Z2kOSIthrrcLxup8Nwqw53FNuSaTaWraf2ze0T8q4p+C6E6qqUKvw4zmo8ji5JSloouOidn5kox3locZdKnSzc6VnW/uMQJbjEECszpFnGWLMFMjPgAyFVGAFUDLZ0GLxc8TPmlklpFaLr6t9fZHa8F4Jh+E0nTo5yl55tWcraKy0itld55tvbY5G7s+Zr0jfEcf4j41Ny7F1SBQEZx2HyqaGWpee+qQYfhu7z9aWF7AW44Hn9aAh3/sTQII186IMqhAoAoCNTG7wqWMg1zy86ZiyEc+5fOmYyKSPG3fVsS5VCBQBQCJoAoB0As0AA0AZoWw6EP/2Q==" alt="NovaSync">
+    <span class="footer-name">NovaSync Tsunami Systems</span>
+  </div>
+  <div class="footer-links">
+    <a href="mailto:novasync.tsunami.systems@gmail.com">Email</a>
+    <a href="https://www.linkedin.com/in/rudwaan-wharwood-aa26b32a2" target="_blank">LinkedIn</a>
+    <a href="https://mando318.github.io/novasync-landing">novasync-landing</a>
+    <a href="https://mytenantstack.co.uk">TenantStack</a>
+  </div>
+  <p class="footer-legal">NovaSync Tsunami Systems &middot; Margate, UK &middot; Built by a solo founder &middot; Nova Core live on Hyperliquid mainnet &middot; Nova Signals is algorithmic market intelligence only. Not financial advice. Not FCA regulated. Trading involves risk. You may lose more than you invest.</p>
+</footer>
+
 </body>
 </html>
